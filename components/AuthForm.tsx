@@ -2,10 +2,9 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Form } from '@/components/ui/form';
 import CustomInput from './CustomInput';
-
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -13,9 +12,9 @@ import { Button } from './ui/button';
 import { Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { authFormSchema } from '@/lib/utils';
-// import { signIn } from '../lib/actions/user.actions';
 import { getSession, signIn } from 'next-auth/react';
 import axios from 'axios';
+import PlaidLink from './PlaidLink';
 
 const AuthForm = ({ type }: { type: string }) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -29,7 +28,6 @@ const AuthForm = ({ type }: { type: string }) => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       email: '',
-      city: '',
       password: '',
     },
   });
@@ -38,16 +36,17 @@ const AuthForm = ({ type }: { type: string }) => {
     setIsLoading(true);
     try {
       if (type === 'sign-up') {
-        const { data: res } = await axios.post(
+        const res = await axios.post(
           `${process.env.NEXT_PUBLIC_API_URL}/api/auth/user`,
           {
             ...data,
           }
         );
 
-        if (res.status === 200) {
-          setUser(() => res);
-          router.push('/sign-in');
+        if (res.data.status === 201) {
+          setUser(() => {
+            return { ...res.data.user };
+          });
         } else {
           // Show error toast here
         }
@@ -101,7 +100,9 @@ const AuthForm = ({ type }: { type: string }) => {
       </header>
 
       {user ? (
-        <div className="flex flex-col gap-4">{/* PlaidLink */}</div>
+        <div className="flex flex-col gap-4">
+          <PlaidLink user={user} variant="primary" />
+        </div>
       ) : (
         <>
           <Form {...form}>
@@ -125,8 +126,8 @@ const AuthForm = ({ type }: { type: string }) => {
                   <CustomInput
                     control={form.control}
                     name="address1"
-                    label="Address"
-                    placeholder="Enter your specific address"
+                    label="address1"
+                    placeholder="Enter your specific address1"
                   />
                   <CustomInput
                     control={form.control}

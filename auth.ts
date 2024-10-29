@@ -27,12 +27,24 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
           switch (data.status) {
             case 200:
-              const { _id, firstName, lastName, email } = data.user;
-              setUser({ $id: _id, name: `${firstName} ${lastName}`, email });
+              const { _id } = data.user;
+              const userWithoutId = {
+                name: `${data.firstName} ${data.lastName}`,
+                email: data.email,
+                userId: data.userId,
+                dwollaCustomerUrl: data.dwollaCustomerUrl,
+                dwollaCustomerId: data.dwollaCustomerId,
+                address1: data.address1,
+                city: data.city,
+                state: data.state,
+                postalCode: data.postalCode,
+                dateOfBirth: data.dateOfBirth,
+                ssn: data.ssn,
+              };
+              setUser({ $id: _id, ...userWithoutId });
               return {
                 id: _id,
-                name: `${firstName} ${lastName}`,
-                email,
+                ...userWithoutId,
               };
 
             case 401:

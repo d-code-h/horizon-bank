@@ -21,6 +21,11 @@ export type SignUpParams = {
   password: string;
 };
 
+export type SignedUser = SignUpParams & {
+  dwollaCustomerId: string;
+  dwollaCustomerUrl: string;
+};
+
 export type LoginUser = {
   email: string;
   password: string;
@@ -30,17 +35,17 @@ export type User = {
   $id: string;
   email: string;
   name: string;
-  // userId: string;
-  // dwollaCustomerUrl: string;
-  // dwollaCustomerId: string;
-  // firstName: string;
-  // lastName: string;
-  // address1: string;
-  // city: string;
-  // state: string;
-  // postalCode: string;
-  // dateOfBirth: string;
-  // ssn: string;
+  userId: string;
+  dwollaCustomerUrl: string;
+  dwollaCustomerId: string;
+  firstName: string;
+  lastName: string;
+  address1: string;
+  city: string;
+  state: string;
+  postalCode: string;
+  dateOfBirth: string;
+  ssn: string;
 };
 
 export type NewUserParams = {
