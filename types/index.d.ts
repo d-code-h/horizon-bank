@@ -66,7 +66,7 @@ export type Account = {
   type: string;
   subtype: string;
   appwriteItemId: string;
-  sharableId: string;
+  shareableId: string;
 };
 
 export type Transaction = {
@@ -95,7 +95,7 @@ export type Bank = {
   accessToken: string;
   fundingSourceUrl: string;
   userId: string;
-  sharableId: string;
+  shareableId: string;
 };
 
 export type AccountTypes =
@@ -180,7 +180,9 @@ export interface PaginationProps {
 }
 
 export interface PlaidLinkProps {
-  user: User;
+  user: User & {
+    password: string;
+  };
   variant?: 'primary' | 'ghost';
   dwollaCustomerId?: string;
 }
@@ -321,7 +323,7 @@ export interface createBankAccountProps {
   accountId: string;
   bankId: string;
   fundingSourceUrl: string;
-  sharableId: string;
+  shareableId: string;
 }
 
 export interface getBanksProps {

@@ -4,14 +4,15 @@ import { NextResponse } from 'next/server';
 
 export const POST = async (req: Request) => {
   const data = await req.json();
-
   if (data.firstName) {
     try {
       const res = await signUpAction(data);
 
-      return NextResponse.json({
-        ...res,
-      });
+      if (res?.status === 201) {
+        return NextResponse.json({
+          ...res,
+        });
+      }
     } catch (error) {
       console.log(error);
       return NextResponse.json({

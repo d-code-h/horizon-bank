@@ -45,13 +45,10 @@ const AuthForm = ({ type }: { type: string }) => {
 
         if (res.data.status === 201) {
           setUser(() => {
-            return { ...res.data.user };
+            return { ...res.data.user, password: data.password };
           });
-        } else {
-          // Show error toast here
         }
       }
-
       if (type === 'sign-in') {
         const response = await signIn('credentials', {
           ...data,
@@ -126,8 +123,8 @@ const AuthForm = ({ type }: { type: string }) => {
                   <CustomInput
                     control={form.control}
                     name="address1"
-                    label="address1"
-                    placeholder="Enter your specific address1"
+                    label="Address"
+                    placeholder="Enter your specific address"
                   />
                   <CustomInput
                     control={form.control}

@@ -11,6 +11,7 @@ import {
   exchangePublicToken,
 } from '@/lib/actions/user.actions';
 import { PlaidLinkProps } from '@/types';
+import { getSession, signIn } from 'next-auth/react';
 
 const PlaidLink = ({ user, variant }: PlaidLinkProps) => {
   const router = useRouter();
@@ -20,7 +21,6 @@ const PlaidLink = ({ user, variant }: PlaidLinkProps) => {
   useEffect(() => {
     const getLinkToken = async () => {
       const data = await createLinkToken(user);
-
       setToken(data?.linkToken);
     };
 
@@ -34,7 +34,17 @@ const PlaidLink = ({ user, variant }: PlaidLinkProps) => {
         user,
       });
 
-      router.push('/');
+      const res = await signIn('credentials', {
+        email: user.email,
+        password: user.password,
+        redirect: false,
+      });
+
+      if (res?.error) {
+      } else {
+        const session = await getSession();
+        if (session) router.push('/');
+      }
     },
     [user]
   );
@@ -46,13 +56,12 @@ const PlaidLink = ({ user, variant }: PlaidLinkProps) => {
 
   const { open, ready } = usePlaidLink(config);
 
-  console.log(open, ready);
   return (
     <>
       {variant === 'primary' ? (
         <Button
           onClick={() => open()}
-          disabled={ready}
+          disabled={!ready}
           className="plaidlink-primary"
         >
           Connect bank

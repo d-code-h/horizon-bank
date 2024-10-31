@@ -70,19 +70,27 @@ export const signUpAction = async (userData: SignUpParams) => {
           password: hashedPass,
         });
 
-        // if (res?.acknowledged) {
-        return {
-          status: 201,
-          user: {
+        if (res?.acknowledged) {
+          const user = {
             $id: JSON.stringify(res?.insertedId),
-            ...userData,
-            dwollaCustomerId,
-            dwollaCustomerUrl,
-          },
-        };
-        // } else {
-        //   throw new Error('Something went wrong from our end. Try again soon.');
-        // }
+            name: `${userData.firstName} ${userData.lastName}`,
+            email: userData.email,
+            dwollaCustomerUrl: dwollaCustomerUrl,
+            dwollaCustomerId: dwollaCustomerId,
+            address1: userData.address1,
+            city: userData.city,
+            state: userData.state,
+            postalCode: userData.postalCode,
+            dateOfBirth: userData.dateOfBirth,
+            ssn: userData.ssn,
+          };
+          return {
+            status: 201,
+            user,
+          };
+        } else {
+          throw new Error('Something went wrong from our end. Try again soon.');
+        }
       }
     } else {
       return {
@@ -133,6 +141,8 @@ export const logoutAccount = async () => {
 
 export const createLinkToken = async (user: User) => {
   try {
+    console.log(user);
+    // TODO: Fix token not coming forth
     const tokenParams = {
       user: {
         client_user_id: user.$id,
@@ -197,14 +207,14 @@ export const exchangePublicToken = async ({
 
     // If the funding source URL is not created, throw an error
     if (!fundingSourceUrl) throw Error;
-    // Create a bank account using the user ID, item ID, account ID, access token, funding source URL, and sharable ID
+    // Create a bank account using the user ID, item ID, account ID, access token, funding source URL, and shareable ID
     await createBank({
       userId: user.$id,
       bankId: itemId,
       accountId: accountData.account_id,
       accessToken,
       fundingSourceUrl,
-      sharableId: encryptId(accountData.account_id),
+      shareableId: encryptId(accountData.account_id),
     });
     // Revalidate the path to reflect the changes
     revalidatePath('/');

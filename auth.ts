@@ -1,7 +1,6 @@
 import NextAuth from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 import axios from 'axios';
-import { setUser } from './app/store/userStore';
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
@@ -29,19 +28,18 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             case 200:
               const { _id } = data.user;
               const userWithoutId = {
-                name: `${data.firstName} ${data.lastName}`,
-                email: data.email,
-                userId: data.userId,
-                dwollaCustomerUrl: data.dwollaCustomerUrl,
-                dwollaCustomerId: data.dwollaCustomerId,
-                address1: data.address1,
-                city: data.city,
-                state: data.state,
-                postalCode: data.postalCode,
-                dateOfBirth: data.dateOfBirth,
-                ssn: data.ssn,
+                name: `${data.user.firstName} ${data.user.lastName}`,
+                email: data.user.email,
+                dwollaCustomerUrl: data.user.dwollaCustomerUrl,
+                dwollaCustomerId: data.user.dwollaCustomerId,
+                address1: data.user.address1,
+                city: data.user.city,
+                state: data.user.state,
+                postalCode: data.user.postalCode,
+                dateOfBirth: data.user.dateOfBirth,
+                ssn: data.user.ssn,
               };
-              setUser({ $id: _id, ...userWithoutId });
+
               return {
                 id: _id,
                 ...userWithoutId,
