@@ -3,11 +3,19 @@
 import {
   createBankAccountProps,
   exchangePublicTokenProps,
+  getBankProps,
+  getBanksProps,
   signInProps,
   SignUpParams,
   User,
 } from '@/types';
-import { addUser, createBankAccount, getUser } from '../db';
+import {
+  addUser,
+  createBankAccount,
+  getDbBank,
+  getDbBanks,
+  getUser,
+} from '../db';
 import { comparePasswords, saltAndHashPassword } from '../utils';
 import { auth } from '@/auth';
 import { redirect } from 'next/navigation';
@@ -72,7 +80,7 @@ export const signUpAction = async (userData: SignUpParams) => {
 
         if (res?.acknowledged) {
           const user = {
-            $id: JSON.stringify(res?.insertedId),
+            $id: res?.insertedId.toString(),
             name: `${userData.firstName} ${userData.lastName}`,
             email: userData.email,
             dwollaCustomerUrl: dwollaCustomerUrl,
@@ -141,14 +149,12 @@ export const logoutAccount = async () => {
 
 export const createLinkToken = async (user: User) => {
   try {
-    console.log(user);
-    // TODO: Fix token not coming forth
     const tokenParams = {
       user: {
         client_user_id: user.$id,
       },
       client_name: user.name,
-      products: ['auth'] as Products[],
+      products: ['auth', 'transactions'] as Products[],
       language: 'en',
       country_codes: ['US'] as CountryCode[],
     };
@@ -224,5 +230,25 @@ export const exchangePublicToken = async ({
     });
   } catch (error) {
     console.error('An error occurred while creating exchanging token:', error);
+  }
+};
+
+export const getBanks = async ({ userId }: getBanksProps) => {
+  try {
+    // * Get all banks with userId to be userId
+    const banks = await getDbBanks(userId);
+    return banks;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getBank = async ({ documentId }: getBankProps) => {
+  try {
+    // * Get specific bank with _id to be documentId
+    const bank = await getDbBank(documentId);
+    return bank;
+  } catch (error) {
+    console.log(error);
   }
 };

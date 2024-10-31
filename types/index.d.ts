@@ -65,7 +65,7 @@ export type Account = {
   name: string;
   type: string;
   subtype: string;
-  appwriteItemId: string;
+  dbItemId: string;
   shareableId: string;
 };
 
@@ -151,7 +151,7 @@ export interface CreditCardProps {
 
 export interface BankInfoProps {
   account: Account;
-  appwriteItemId?: string;
+  dbItemId?: string;
   type: 'full' | 'card';
 }
 
@@ -208,7 +208,7 @@ export interface BankDropdownProps {
 
 export interface BankTabItemProps {
   account: Account;
-  appwriteItemId?: string;
+  dbItemId?: string;
 }
 
 export interface TotalBalanceBoxProps {
@@ -236,7 +236,7 @@ export interface SiderbarProps {
 export interface RecentTransactionsProps {
   accounts: Account[];
   transactions: Transaction[];
-  appwriteItemId: string;
+  dbItemId: string;
   page: number;
 }
 
@@ -271,7 +271,7 @@ export interface getAccountsProps {
 }
 
 export interface getAccountProps {
-  appwriteItemId: string;
+  dbItemId: string;
 }
 
 export interface getInstitutionProps {
