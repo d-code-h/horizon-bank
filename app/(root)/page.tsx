@@ -1,12 +1,16 @@
 import HeaderBox from '@/components/HeaderBox';
+import RecentTransactions from '@/components/RecentTransactions';
+
 import RightSidebar from '@/components/RightSidebar';
 import TotalBalanceBox from '@/components/TotalBalanceBox';
 import { getAccount, getAccounts } from '@/lib/actions/bank.actions';
 import { getLoggedInUser } from '@/lib/actions/user.actions';
-import { SearchParamProps, User } from '@/types';
 
 const Home = async ({ searchParams }: SearchParamProps) => {
-  const { id } = await searchParams;
+  const { id, page } = await searchParams;
+
+  const currentPage = Number(page as string) || 1;
+
   const user = (await getLoggedInUser()) as User;
   const accounts = await getAccounts({
     userId: user.$id,
@@ -14,18 +18,20 @@ const Home = async ({ searchParams }: SearchParamProps) => {
 
   if (!accounts) return;
 
-  const accountsData = accounts.data;
+  const accountsData = accounts.accounts!;
 
-  const dbItemId = id || accountsData[0].dbItemId;
+  const dbItemId = id || (accountsData && accountsData[0].dbItemId);
+
+  // Ensure dbItemId is a string before calling getAccount
+  if (typeof dbItemId !== 'string') return null;
 
   const account = await getAccount({
     dbItemId,
   });
 
-  console.log({
-    accountsData,
-    account,
-  });
+  if (!account) return;
+
+  // console.log('Account', account);
 
   return (
     <section className="home">
@@ -34,23 +40,28 @@ const Home = async ({ searchParams }: SearchParamProps) => {
           <HeaderBox
             type="greeting"
             title="Welcome"
-            user={user?.name || 'Guest'}
+            user={user?.name.split(' ')[0] || 'Guest'}
             subtext="Access and manage your account and transactions efficiently."
           />
 
           <TotalBalanceBox
             accounts={accountsData}
-            totalBanks={accounts.totalBanks}
-            totalCurrentBalance={accounts.totalCurrentBalance}
+            totalBanks={accounts.totalBanks as number}
+            totalCurrentBalance={accounts.totalCurrentBalance as number}
           />
         </header>
-        RECENT TRANSACTIONS
+        <RecentTransactions
+          accounts={accountsData}
+          transactions={account.transactions}
+          dbItemId={dbItemId}
+          page={currentPage}
+        />
       </div>
 
       <RightSidebar
         user={user}
-        transactions={accounts.transactions}
-        banks={[accountsData.slice(0, 2)]}
+        transactions={account.transactions}
+        banks={[...accountsData.slice(0, 2)]}
       />
     </section>
   );

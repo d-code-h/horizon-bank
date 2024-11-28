@@ -1,11 +1,5 @@
 'use server';
 
-import {
-  AddFundingSourceParams,
-  CreateFundingSourceOptions,
-  NewDwollaCustomerParams,
-  TransferParams,
-} from '@/types';
 import { Client } from 'dwolla-v2';
 
 const getEnvironment = (): 'production' | 'sandbox' => {
@@ -61,9 +55,11 @@ export const createDwollaCustomer = async (
   newCustomer: NewDwollaCustomerParams
 ) => {
   try {
-    return await dwollaClient
+    const newDwollaClient = await dwollaClient
       .post('customers', newCustomer)
       .then((res) => res.headers.get('location'));
+
+    return newDwollaClient;
   } catch (err) {
     console.error('Creating a Dwolla Customer Failed: ', err);
   }

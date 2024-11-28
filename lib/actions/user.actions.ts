@@ -1,18 +1,10 @@
 'use server';
 
 import {
-  createBankAccountProps,
-  exchangePublicTokenProps,
-  getBankProps,
-  getBanksProps,
-  signInProps,
-  SignUpParams,
-  User,
-} from '@/types';
-import {
   addUser,
   createBankAccount,
   getDbBank,
+  getDbBankByAccountId,
   getDbBanks,
   getUser,
 } from '../db';
@@ -32,10 +24,23 @@ import { plaidClient } from '../plaid';
 import { revalidatePath } from 'next/cache';
 import { addFundingSource, createDwollaCustomer } from './dwolla.actions';
 
+export const getUserInfo = async ({ userId }: getUserInfoProps) => {
+  try {
+    const user = await getUser({ id: userId });
+    if (user)
+      return {
+        ...user,
+        _id: user._id.toString(),
+      };
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 export const signInAction = async ({ email, password }: signInProps) => {
   try {
     // Check user exist
-    const user = await getUser(email);
+    const user = await getUser({ email });
 
     // Compare passwords
     if (user) {
@@ -54,7 +59,7 @@ export const signUpAction = async (userData: SignUpParams) => {
 
   try {
     // User exist?
-    const user = await getUser(email);
+    const user = await getUser({ email });
     if (!user) {
       // Hash password
       const hashedPass = await saltAndHashPassword(password);
@@ -116,7 +121,7 @@ export const signUpAction = async (userData: SignUpParams) => {
   }
 };
 
-export async function getLoggedInUser() {
+export const getLoggedInUser = async () => {
   try {
     const session = await auth();
     const loggedIn = session?.user;
@@ -134,13 +139,10 @@ export async function getLoggedInUser() {
     console.log(error);
     redirect('/sign-in');
   }
-}
+};
 
 export const logoutAccount = async () => {
   try {
-    // const { account } = await createSessionClient();
-    // cookies().delete('appwrite-session');
-    // await account.deleteSession('current');
   } catch (error) {
     console.log(error);
     return null;
@@ -159,6 +161,7 @@ export const createLinkToken = async (user: User) => {
       country_codes: ['US'] as CountryCode[],
     };
     const response = await plaidClient.linkTokenCreate(tokenParams);
+
     return parseStringify({ linkToken: response.data.link_token });
   } catch (error) {
     console.log(error);
@@ -200,11 +203,13 @@ export const exchangePublicToken = async ({
       account_id: accountData.account_id,
       processor: 'dwolla' as ProcessorTokenCreateRequestProcessorEnum,
     };
+
     const processorTokenResponse = await plaidClient.processorTokenCreate(
       request
     );
     const processorToken = processorTokenResponse.data.processor_token;
     // Create a funding source URL for the account using the Dwolla customer ID, processor token, and bank name
+
     const fundingSourceUrl = await addFundingSource({
       dwollaCustomerId: user.dwollaCustomerId,
       processorToken,
@@ -215,19 +220,19 @@ export const exchangePublicToken = async ({
     if (!fundingSourceUrl) throw Error;
     // Create a bank account using the user ID, item ID, account ID, access token, funding source URL, and shareable ID
     await createBank({
-      userId: user.$id,
+      userId: user.$id || (user._id?.toString() as string),
       bankId: itemId,
       accountId: accountData.account_id,
       accessToken,
       fundingSourceUrl,
-      shareableId: encryptId(accountData.account_id),
+      shareableId: encryptId(accountData.account_id.toString()),
     });
     // Revalidate the path to reflect the changes
     revalidatePath('/');
     // Return a success message
-    return parseStringify({
+    return {
       publicTokenExchange: 'complete',
-    });
+    };
   } catch (error) {
     console.error('An error occurred while creating exchanging token:', error);
   }
@@ -247,8 +252,26 @@ export const getBank = async ({ documentId }: getBankProps) => {
   try {
     // * Get specific bank with _id to be documentId
     const bank = await getDbBank(documentId);
+
     return bank;
   } catch (error) {
     console.log(error);
   }
 };
+
+export const getBankByAccountId = async ({
+  accountId,
+}: getBankByAccountIdProps) => {
+  try {
+    const bank = await getDbBankByAccountId(accountId);
+    if (bank) {
+      return bank;
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export async function revalidate(link: string) {
+  revalidatePath(link);
+}

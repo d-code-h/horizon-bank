@@ -9,9 +9,10 @@ import { useRouter } from 'next/navigation';
 import {
   createLinkToken,
   exchangePublicToken,
+  getUserInfo,
 } from '@/lib/actions/user.actions';
-import { PlaidLinkProps } from '@/types';
 import { getSession, signIn } from 'next-auth/react';
+import Image from 'next/image';
 
 const PlaidLink = ({ user, variant }: PlaidLinkProps) => {
   const router = useRouter();
@@ -29,21 +30,37 @@ const PlaidLink = ({ user, variant }: PlaidLinkProps) => {
 
   const onSuccess = useCallback<PlaidLinkOnSuccess>(
     async (public_token: string) => {
-      await exchangePublicToken({
-        publicToken: public_token,
-        user,
-      });
+      let userInfo = user;
+      try {
+        if (!userInfo.dwollaCustomerId) {
+          const res = await getUserInfo({ userId: user.$id });
 
-      const res = await signIn('credentials', {
-        email: user.email,
-        password: user.password,
-        redirect: false,
-      });
+          if (res) {
+            userInfo = res;
+          }
+        }
 
-      if (res?.error) {
-      } else {
-        const session = await getSession();
-        if (session) router.push('/');
+        await exchangePublicToken({
+          publicToken: public_token,
+          user: userInfo,
+        });
+
+        if (user.password) {
+          const res = await signIn('credentials', {
+            email: userInfo.email,
+            password: userInfo.password,
+            redirect: false,
+          });
+
+          if (res?.error) {
+          } else {
+            const session = await getSession();
+            if (session) router.push('/');
+          }
+        }
+      } catch (error: unknown) {
+        console.log(error);
+        console.log('Error occur here');
       }
     },
     [user]
@@ -67,9 +84,32 @@ const PlaidLink = ({ user, variant }: PlaidLinkProps) => {
           Connect bank
         </Button>
       ) : variant === 'ghost' ? (
-        <Button>Connect bank</Button>
+        <Button
+          onClick={() => open()}
+          variant="ghost"
+          className="plaidlink-ghost"
+        >
+          <Image
+            src="/icons/connect-bank.svg"
+            alt="connect bank"
+            width={24}
+            height={24}
+          />
+
+          <p className="hidden text-[16px] font-semibold text-black-2 xl:block">
+            Connect bank
+          </p>
+        </Button>
       ) : (
-        <Button>Connect bank</Button>
+        <Button onClick={() => open()} className="plaidlink-default">
+          <Image
+            src="/icons/connect-bank.svg"
+            alt="connect bank"
+            width={24}
+            height={24}
+          />
+          <p className="text-[16px] font-semibold text-black-2">Connect bank</p>
+        </Button>
       )}
     </>
   );
