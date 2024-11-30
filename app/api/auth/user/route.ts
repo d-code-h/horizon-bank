@@ -1,9 +1,9 @@
-// pages/api/auth/user.ts
 import { signInAction, signUpAction } from '@/lib/actions/user.actions';
 import { NextResponse } from 'next/server';
 
 export const POST = async (req: Request) => {
   const data = await req.json();
+  console.log('Data', data);
   if (data.firstName) {
     try {
       const res = await signUpAction(data);

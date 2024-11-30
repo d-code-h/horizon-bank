@@ -16,15 +16,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         credentials: Partial<Record<'email' | 'password', unknown>>
       ) => {
         try {
-          const { data } = await axios.post(
-            `${
-              process.env.NEXT_PUBLIC_VERCEL_URL || process.env.Next_Auth
-            }/api/auth/user`,
-            {
-              email: credentials.email,
-              password: credentials.password,
-            }
-          );
+          const { data } = await axios.post('/api/auth/user', {
+            email: credentials.email,
+            password: credentials.password,
+          });
 
           switch (data.status) {
             case 200:

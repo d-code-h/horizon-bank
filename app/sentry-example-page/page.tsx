@@ -56,9 +56,7 @@ export default function Page() {
               },
               async () => {
                 const res = await fetch(
-                  `${
-                    process.env.NEXT_PUBLIC_VERCEL_URL || process.env.Next_Auth
-                  }/api/sentry-example-api`
+                  `${process.env.NEXT_AUTH}/api/sentry-example-api`
                 );
                 if (!res.ok) {
                   throw new Error('Sentry Example Frontend Error');
