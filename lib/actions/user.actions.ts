@@ -31,7 +31,7 @@ export const getUserInfo = async ({ userId }: getUserInfoProps) => {
       return {
         ...user,
         _id: user._id.toString(),
-      };
+      } as User;
   } catch (error) {
     console.log(error);
   }
