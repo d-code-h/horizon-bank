@@ -1,7 +1,6 @@
-declare type SearchParamProps = {
-  params: { [key: string]: string };
-  searchParams: { [key: string]: string | string[] | undefined };
-};
+declare interface SearchParamProps {
+  searchParams: Promise<{ id: string; page: string }>;
+}
 
 declare type SignUpParams = {
   firstName: string;
