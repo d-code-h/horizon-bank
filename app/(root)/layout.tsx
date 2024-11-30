@@ -9,6 +9,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const user = (await getLoggedInUser()) as User;
+  console.log('LoggedUser', user);
 
   return (
     <main className="flex h-screen w-full font-inter">
@@ -17,7 +18,9 @@ export default async function RootLayout({
       <div className="flex size-full flex-col">
         <div className="root-layout">
           <Image src="/icons/logo.svg" width={30} height={30} alt="logo" />
-          <div><MobileNav user={user} /></div>
+          <div>
+            <MobileNav user={user} />
+          </div>
         </div>
         {children}
       </div>
