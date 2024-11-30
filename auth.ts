@@ -16,6 +16,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         credentials: Partial<Record<'email' | 'password', unknown>>
       ) => {
         try {
+          console.log('Server message 1');
+          console.log('Server message 3', process.env.NEXT_PUBLIC_VERCEL_URL);
           const { data } = await axios.post(
             `${
               process.env.NEXT_PUBLIC_VERCEL_URL ||
@@ -26,6 +28,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
               password: credentials.password,
             }
           );
+          console.log('Server message 2');
 
           switch (data.status) {
             case 200:

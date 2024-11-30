@@ -56,6 +56,7 @@ const AuthForm = ({ type }: { type: string }) => {
           console.log(response.error);
         } else {
           const session = await getSession();
+          console.log('Session', session);
           if (session) router.push('/');
         }
       }
