@@ -90,6 +90,7 @@ export const getDbBanks = async (id: string) => {
     return null;
   }
 };
+
 export const getDbBank = async (id: string) => {
   try {
     const db = await main('banks');

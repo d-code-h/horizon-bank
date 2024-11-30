@@ -85,14 +85,25 @@ export const createTransfer = async ({
         value: amount,
       },
     };
-    return await dwollaClient
-      .post('transfers', requestBody)
-      .then((res) => res.headers.get('location'));
+    return await dwollaClient.post('transfers', requestBody).then((res) => {
+      return res.headers.get('location');
+    });
   } catch (err) {
     console.error('Transfer fund failed: ', err);
   }
 };
 
+export const getTransfers = async (customerUrl: string) => {
+  try {
+    return await dwollaClient.get(`${customerUrl}/transfers`).then((res) => {
+      return res.body._embedded['transfers'].filter(
+        (each: DwollaTransactionProps) => each.status !== 'cancelled'
+      );
+    });
+  } catch (error) {
+    console.log(`Error happened when fetching transfers: ${error}`);
+  }
+};
 export const addFundingSource = async ({
   dwollaCustomerId,
   processorToken,

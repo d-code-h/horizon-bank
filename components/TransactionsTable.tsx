@@ -52,7 +52,7 @@ const TransactionsTable = ({ transactions }: TransactionTableProps) => {
 
           return (
             <TableRow
-              key={t.id}
+              key={t._id}
               className={`${
                 isDebit || amount[0] === '-' ? 'bg-[#FFFBFA]' : 'bg-[#F6FEF9]'
               } !over:bg-none !border-b-DEFAULT`}
@@ -84,7 +84,7 @@ const TransactionsTable = ({ transactions }: TransactionTableProps) => {
               </TableCell>
 
               <TableCell className="pl-2 pr-10 capitalize min-w-24">
-                {t.paymentChannel}
+                {t.channel}
               </TableCell>
 
               <TableCell className="pl-2 pr-10 max-md:hidden">

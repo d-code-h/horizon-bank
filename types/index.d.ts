@@ -1,12 +1,7 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable no-unused-vars */
-
 declare type SearchParamProps = {
   params: { [key: string]: string };
   searchParams: { [key: string]: string | string[] | undefined };
 };
-
-// ========================================
 
 declare type SignUpParams = {
   firstName: string;
@@ -74,7 +69,7 @@ declare interface Transaction {
   id?: string;
   _id?: string;
   name: string;
-  paymentChannel: string;
+  channel: string;
   type: string;
   accountId: string;
   amount: number;
@@ -83,7 +78,7 @@ declare interface Transaction {
   date: string;
   image: string;
   type: string;
-  $createdAt: string;
+  created: string;
   channel: string;
   senderBankId: string;
   receiverBankId: string;
@@ -188,22 +183,13 @@ declare interface PlaidLinkProps {
   dwollaCustomerId?: string;
 }
 
-// declare type User = sdk.Models.Document & {
-//   accountId: string;
-//   email: string;
-//   name: string;
-//   items: string[];
-//   accessToken: string;
-//   image: string;
-// };
-
 declare interface AuthFormProps {
   type: 'sign-in' | 'sign-up';
 }
 
 declare interface BankDropdownProps {
   accounts: Account[];
-  setValue?: UseFormSetValue<any>;
+  setValue?: UseFormSetValue<unknown>;
   otherStyles?: string;
 }
 
@@ -337,4 +323,20 @@ declare interface getBankProps {
 
 declare interface getBankByAccountIdProps {
   accountId: string;
+}
+
+declare interface DwollaTransactionProps {
+  _links: {
+    source: object;
+    'destination-funding-source': object;
+    self: object;
+    'source-funding-source': object;
+    destination: object;
+  };
+  id: string;
+  status: string;
+  amount: { value: string; currency: string };
+  created: string;
+  clearing: { source: string };
+  individualAchId: string;
 }

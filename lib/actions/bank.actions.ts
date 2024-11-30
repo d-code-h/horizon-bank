@@ -68,33 +68,11 @@ export const getAccount = async ({ dbItemId }: getAccountProps) => {
     });
 
     const accountData = accountsResponse.data.accounts[0];
-    // console.log('AccountResponse', accountsResponse);
 
     // get transfer transactions from db
-    const transferTransactionsData = await getTransactionsByBankId({
+    const transferedTransactions = await getTransactionsByBankId({
       bankId: bank?._id.toString() as string,
     });
-
-    console.log('Transfer', transferTransactionsData);
-    // if (!transferTransactionsData)
-    //   throw new Error('No transfer transaction data');
-
-    let transferTransactions: Transaction[] | [] = [];
-
-    // !Fix the type error here
-    if (transferTransactionsData) {
-      transferTransactions = transferTransactionsData.documents.map(
-        (transferData) => ({
-          id: transferData._id,
-          name: transferData.name,
-          amount: transferData.amount,
-          date: transferData.$createdAt,
-          paymentChannel: transferData.channel,
-          category: transferData.category,
-          type: transferData.senderBankId === bank?._id ? 'debit' : 'credit',
-        })
-      ) as unknown as Transaction[];
-    }
 
     // get institution info from plaid
     const institution = await getInstitution({
@@ -121,7 +99,7 @@ export const getAccount = async ({ dbItemId }: getAccountProps) => {
     // sort transactions by date such that the most recent transaction is first
     const allTransactions = [
       ...((transactions || []) as Transaction[]),
-      ...(transferTransactions || []),
+      ...(transferedTransactions || []),
     ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
     return {
@@ -170,7 +148,7 @@ export const getTransactions = async ({
       transactions = response.data.added.map((transaction) => ({
         id: transaction.transaction_id,
         name: transaction.name,
-        paymentChannel: transaction.payment_channel,
+        channel: transaction.payment_channel,
         type: transaction.payment_channel,
         accountId: transaction.account_id,
         amount: transaction.amount,

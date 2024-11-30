@@ -22,7 +22,6 @@ const Home = async ({ searchParams }: SearchParamProps) => {
 
   const dbItemId = id || (accountsData && accountsData[0].dbItemId);
 
-  // Ensure dbItemId is a string before calling getAccount
   if (typeof dbItemId !== 'string') return null;
 
   const account = await getAccount({
@@ -30,8 +29,6 @@ const Home = async ({ searchParams }: SearchParamProps) => {
   });
 
   if (!account) return;
-
-  // console.log('Account', account);
 
   return (
     <section className="home">
@@ -52,7 +49,7 @@ const Home = async ({ searchParams }: SearchParamProps) => {
         </header>
         <RecentTransactions
           accounts={accountsData}
-          transactions={account.transactions}
+          transactions={account.transactions as Transaction[]}
           dbItemId={dbItemId}
           page={currentPage}
         />
@@ -60,7 +57,7 @@ const Home = async ({ searchParams }: SearchParamProps) => {
 
       <RightSidebar
         user={user}
-        transactions={account.transactions}
+        transactions={account.transactions as Transaction[]}
         banks={[...accountsData.slice(0, 2)]}
       />
     </section>

@@ -1,3 +1,4 @@
+import { BankDropdown } from '@/components/BankDropdown';
 import HeaderBox from '@/components/HeaderBox';
 import { Pagination } from '@/components/Pagination';
 import TransactionsTable from '@/components/TransactionsTable';
@@ -8,7 +9,6 @@ import { formatAmount } from '@/lib/utils';
 const TransactionHistory = async ({ searchParams }: SearchParamProps) => {
   const { id, page } = await searchParams;
 
-  console.log(id, page);
   const currentPage = Number(page as string) || 1;
   const loggedIn = await getLoggedInUser();
 
@@ -41,6 +41,8 @@ const TransactionHistory = async ({ searchParams }: SearchParamProps) => {
           title="Transaction History"
           subtext="See your bank details and transactions."
         />
+
+        <BankDropdown accounts={accountsData} />
       </div>
 
       <div className="space-y-6">
@@ -65,7 +67,9 @@ const TransactionHistory = async ({ searchParams }: SearchParamProps) => {
 
         <section className="flex w-full flex-col gap-6">
           {currentTransactions && (
-            <TransactionsTable transactions={currentTransactions} />
+            <TransactionsTable
+              transactions={currentTransactions as Transaction[]}
+            />
           )}
           {totalPages && totalPages > 1 && (
             <div className="my-4 w-full">

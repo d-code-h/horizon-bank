@@ -77,6 +77,7 @@ const PaymentTransferForm = ({ accounts }: PaymentTransferFormProps) => {
           amount: data.amount,
           senderId: senderBank.userId,
           senderBankId: senderBank._id,
+          dwollaTransactionId: transfer.split('/').pop(),
           receiverId: receiverBank.userId,
           receiverBankId: receiverBank._id,
           email: data.email,
@@ -113,6 +114,7 @@ const PaymentTransferForm = ({ accounts }: PaymentTransferFormProps) => {
                     Select the bank account you want to transfer funds from
                   </FormDescription>
                 </div>
+
                 <div className="flex w-full flex-col">
                   <FormControl>
                     <BankDropdown

@@ -17,7 +17,6 @@ import axios from 'axios';
 import PlaidLink from './PlaidLink';
 
 const AuthForm = ({ type }: { type: string }) => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
@@ -57,13 +56,13 @@ const AuthForm = ({ type }: { type: string }) => {
 
         if (response?.error) {
           // Show error message
+          console.log(response.error);
         } else {
           const session = await getSession();
           if (session) router.push('/');
         }
       }
     } catch {
-      // console.log(error);
       console.log('Unexpected Error');
     } finally {
       setIsLoading(false);
