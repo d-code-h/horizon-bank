@@ -35,12 +35,9 @@ const AuthForm = ({ type }: { type: string }) => {
     setIsLoading(true);
     try {
       if (type === 'sign-up') {
-        const res = await axios.post(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/auth/user`,
-          {
-            ...data,
-          }
-        );
+        const res = await axios.post('/api/auth/user', {
+          ...data,
+        });
 
         if (res.data.status === 201) {
           setUser(() => {

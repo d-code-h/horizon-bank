@@ -17,7 +17,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       ) => {
         try {
           const { data } = await axios.post(
-            `${process.env.NEXT_PUBLIC_API_URL}/api/auth/user`,
+            `/api/auth/user`,
             {
               email: credentials.email,
               password: credentials.password,
