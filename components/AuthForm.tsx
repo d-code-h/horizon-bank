@@ -36,7 +36,9 @@ const AuthForm = ({ type }: { type: string }) => {
     try {
       if (type === 'sign-up') {
         const res = await axios.post(
-          `${process.env.VERCEL_URL || process.env.Next_Auth}/api/auth/user`,
+          `${
+            process.env.NEXT_PUBLIC_VERCEL_URL || process.env.Next_Auth
+          }/api/auth/user`,
           {
             ...data,
           }

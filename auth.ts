@@ -17,7 +17,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       ) => {
         try {
           const { data } = await axios.post(
-            `${process.env.VERCEL_URL || process.env.Next_Auth}/api/auth/user`,
+            `${
+              process.env.NEXT_PUBLIC_VERCEL_URL || process.env.Next_Auth
+            }/api/auth/user`,
             {
               email: credentials.email,
               password: credentials.password,
