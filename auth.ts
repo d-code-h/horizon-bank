@@ -57,20 +57,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       },
     }),
   ],
-  // Secure cookies configuration
-  useSecureCookies: process.env.NODE_ENV === 'production',
 
-  cookies: {
-    sessionToken: {
-      name: `__Secure-next-auth.session-token`,
-      options: {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
-        path: '/',
-      },
-    },
-  },
   callbacks: {
     async session({ session, token }) {
       if (token) {
@@ -87,8 +74,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return token;
     },
   },
-  // Secret for encrypting session tokens
-  secret: process.env.NEXTAUTH_SECRET,
 
   pages: {
     signIn: '/sign-in',
