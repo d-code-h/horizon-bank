@@ -4,7 +4,7 @@ import { getAccounts } from '@/lib/actions/bank.actions';
 import { getLoggedInUser } from '@/lib/actions/user.actions';
 
 const Transfer = async () => {
-  const loggedIn = await getLoggedInUser();
+  const loggedIn = (await getLoggedInUser()) as User;
   const accounts = await getAccounts({
     userId: loggedIn.$id,
   });

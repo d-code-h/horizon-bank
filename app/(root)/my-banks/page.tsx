@@ -4,7 +4,7 @@ import { getAccounts } from '@/lib/actions/bank.actions';
 import { getLoggedInUser } from '@/lib/actions/user.actions';
 
 const MyBanks = async () => {
-  const user = await getLoggedInUser();
+  const user = (await getLoggedInUser()) as User;
   const accounts = await getAccounts({
     userId: user.$id,
   });

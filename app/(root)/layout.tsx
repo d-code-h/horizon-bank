@@ -9,7 +9,6 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const user = (await getLoggedInUser()) as User;
-  console.log('LoggedUser', user);
 
   return (
     <main className="flex h-screen w-full font-inter">

@@ -122,12 +122,13 @@ export const signUpAction = async (userData: SignUpParams) => {
 };
 
 export const getLoggedInUser = async () => {
+  let redirectPath: null | string = null;
   try {
     const session = await auth();
     const loggedIn = session?.user;
 
     if (!loggedIn) {
-      redirect('/sign-in');
+      redirectPath = '/sign-in';
     } else {
       return {
         $id: loggedIn?.id as string,
@@ -137,7 +138,11 @@ export const getLoggedInUser = async () => {
     }
   } catch (error) {
     console.log(error);
-    redirect('/sign-in');
+    redirectPath = '/sign-in';
+  } finally {
+    if (redirectPath) {
+      redirect(redirectPath);
+    }
   }
 };
 
