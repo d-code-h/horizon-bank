@@ -1,4 +1,4 @@
-# 🌅 Horizon Bank
+# Horizon Bank 💳
 
 Welcome to **Horizon Bank**! 🌟  
 A modern banking platform built with **Next.js**, **React**, and a powerful tech stack to offer seamless banking services. 🚀
