@@ -26,7 +26,7 @@ const TransactionHistory = async ({ searchParams }: SearchParamProps) => {
 
   // Fetch the selected account details
   const account = await getAccount({ dbItemId });
-  if (!account) return null; // Return early if no account is found
+  if (!account.data) return null; // Return early if no account is found
 
   // Pagination logic for transactions
   const rowsPerPage = 10;
