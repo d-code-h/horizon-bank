@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Inter, IBM_Plex_Serif } from 'next/font/google';
 import './globals.css';
 
+// Loading fonts with Google Fonts
 const inter = Inter({
   subsets: ['latin'],
   variable: '--font-inter',
@@ -28,8 +29,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head></head>
       <body
-        className={`${inter.variable} ${ibmPlexSerif.variable}} antialiased`}
+        className={`${inter.variable} ${ibmPlexSerif.variable} antialiased`}
       >
         {children}
       </body>

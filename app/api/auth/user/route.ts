@@ -1,49 +1,43 @@
-import { signInAction, signUpAction } from '@/lib/actions/user.actions';
+import { signInAction } from '@/lib/actions/user.actions';
 import { NextResponse } from 'next/server';
 
 export const POST = async (req: Request) => {
-  const data = await req.json();
-  if (data.firstName) {
-    try {
-      const res = await signUpAction(data);
+  try {
+    // Parse the incoming JSON request body
+    const { email, password } = await req.json();
 
-      if (res?.status === 201) {
-        return NextResponse.json({
-          ...res,
-        });
-      }
-    } catch (error) {
-      console.log(error);
+    // Ensure that email and password are provided
+    if (!email || !password) {
       return NextResponse.json({
-        status: 500,
-        message: 'Internal Server Error',
+        status: 400,
+        message: 'Email and password are required',
       });
     }
-  } else {
-    // Sign in logics
-    const { email, password } = data;
 
-    try {
-      const user = await signInAction({ email, password });
+    // Attempt to sign in the user with the provided credentials
+    const user = await signInAction({ email, password });
 
-      if (!user) {
-        return NextResponse.json({
-          status: 401,
-          message: 'User not found or invalid credentails',
-        });
-      }
-
-      // Return user data
+    // Check if the user was found
+    if (!user) {
       return NextResponse.json({
-        status: 200,
-        user,
-      });
-    } catch (error) {
-      console.log(error);
-      return NextResponse.json({
-        status: 500,
-        message: 'Internal Server Error',
+        status: 401,
+        message: 'User not found or invalid credentials',
       });
     }
+
+    // Return the user information upon successful sign-in
+    return NextResponse.json({
+      status: 200,
+      user,
+    });
+  } catch (error) {
+    // Log the error for debugging purposes
+    console.error('Sign-in error:', error);
+
+    // Return a generic internal server error response
+    return NextResponse.json({
+      status: 500,
+      message: 'Internal Server Error',
+    });
   }
 };

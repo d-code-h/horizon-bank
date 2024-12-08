@@ -1,15 +1,18 @@
 'use client';
 import { useState } from 'react';
-
 import { Button } from './ui/button';
 
+// Copy component that allows the user to copy a title to clipboard
 const Copy = ({ title }: { title: string }) => {
+  // State to track if the content has been copied
   const [hasCopied, setHasCopied] = useState(false);
 
+  // Function to handle copying the title to clipboard
   const copyToClipboard = () => {
-    navigator.clipboard.writeText(title);
-    setHasCopied(true);
+    navigator.clipboard.writeText(title); // Copy the title to the clipboard
+    setHasCopied(true); // Set the copied state to true
 
+    // Reset the copied state after 2 seconds
     setTimeout(() => {
       setHasCopied(false);
     }, 2000);
@@ -20,13 +23,16 @@ const Copy = ({ title }: { title: string }) => {
       data-state="closed"
       className="mt-3 flex max-w-[320px] gap-4"
       variant="secondary"
-      onClick={copyToClipboard}
+      onClick={copyToClipboard} // Trigger copy action on button click
     >
+      {/* Display the title text */}
       <p className="line-clamp-1 w-full max-w-full text-xs font-medium text-black-2">
-        {title} test
+        {title} test {/* The "test" text is for demonstration purposes */}
       </p>
 
+      {/* Conditional rendering for the clipboard icon */}
       {!hasCopied ? (
+        // Clipboard icon to indicate that copying is available
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="24"
@@ -43,6 +49,7 @@ const Copy = ({ title }: { title: string }) => {
           <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path>
         </svg>
       ) : (
+        // Checkmark icon displayed when the content is copied
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="24"

@@ -2,7 +2,6 @@
 
 import Image from 'next/image';
 import { useSearchParams, useRouter } from 'next/navigation';
-
 import {
   cn,
   formUrlQuery,
@@ -10,30 +9,34 @@ import {
   getAccountTypeColors,
 } from '@/lib/utils';
 
+// BankInfo component for rendering bank account info and handling tab changes
 const BankInfo = ({ account, dbItemId, type }: BankInfoProps) => {
   const router = useRouter();
   const searchParams = useSearchParams();
 
+  // Check if the current account is active
   const isActive = dbItemId === account?.dbItemId;
 
+  // Handle bank change by updating the URL query
   const handleBankChange = () => {
     const newUrl = formUrlQuery({
       params: searchParams.toString(),
       key: 'id',
-      value: account?.dbItemId,
+      value: account?.dbItemId, // Update the 'id' query parameter
     });
-    router.push(newUrl, { scroll: false });
+    router.push(newUrl, { scroll: false }); // Navigate to the new URL
   };
 
+  // Get the colors for the account based on its type
   const colors = getAccountTypeColors(account?.type as AccountTypes);
 
   return (
     <div
-      onClick={handleBankChange}
-      className={cn(`bank-info ${colors.bg}`, {
-        'shadow-sm border-blue-700': type === 'card' && isActive,
-        'rounded-xl': type === 'card',
-        'hover:shadow-sm cursor-pointer': type === 'card',
+      onClick={handleBankChange} // On click, handle the bank change
+      className={cn('bank-info', colors.bg, {
+        'shadow-sm border-blue-700': type === 'card' && isActive, // Add styles if it's a card type and active
+        'rounded-xl': type === 'card', // Apply rounded corners for card type
+        'hover:shadow-sm cursor-pointer': type === 'card', // Apply hover effect for card type
       })}
     >
       <figure
@@ -64,7 +67,8 @@ const BankInfo = ({ account, dbItemId, type }: BankInfoProps) => {
         </div>
 
         <p className={`text-16 font-medium text-blue-700 ${colors.subText}`}>
-          {formatAmount(account.currentBalance)}
+          {formatAmount(account.currentBalance)}{' '}
+          {/* Format and display balance */}
         </p>
       </div>
     </div>

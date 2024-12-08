@@ -1,19 +1,19 @@
 'use client';
 
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Loader2 } from 'lucide-react';
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import * as z from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod'; // Importing Zod for form validation
+import { Loader2 } from 'lucide-react'; // Importing a loader icon for displaying loading state
+import { useRouter } from 'next/navigation'; // Importing Next.js useRouter hook for navigation
+import { useState } from 'react'; // Importing React's useState hook for managing loading state
+import { useForm } from 'react-hook-form'; // Importing React Hook Form for handling form validation and submission
+import * as z from 'zod'; // Importing Zod for schema validation
 
-import { createTransfer } from '@/lib/actions/dwolla.actions';
-import { createTransaction } from '@/lib/actions/transaction.actions';
-import { getBank, getBankByAccountId } from '@/lib/actions/user.actions';
-import { decryptId } from '@/lib/utils';
+import { createTransfer } from '@/lib/actions/dwolla.actions'; // Function to create a transfer action via Dwolla API
+import { createTransaction } from '@/lib/actions/transaction.actions'; // Function to create a transaction record
+import { getBank, getBankByAccountId } from '@/lib/actions/user.actions'; // Functions to retrieve bank information
+import { decryptId } from '@/lib/utils'; // Utility function to decrypt sharable ID
 
-import { BankDropdown } from './BankDropdown';
-import { Button } from './ui/button';
+import { BankDropdown } from './BankDropdown'; // Custom component for selecting bank
+import { Button } from './ui/button'; // Custom button component
 import {
   Form,
   FormControl,
@@ -22,10 +22,11 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from './ui/form';
-import { Input } from './ui/input';
-import { Textarea } from './ui/textarea';
+} from './ui/form'; // Custom form components
+import { Input } from './ui/input'; // Custom input component
+import { Textarea } from './ui/textarea'; // Custom textarea component
 
+// Zod validation schema for the form
 const formSchema = z.object({
   email: z.string().email('Invalid email address'),
   name: z.string().min(4, 'Transfer note is too short'),
@@ -35,11 +36,11 @@ const formSchema = z.object({
 });
 
 const PaymentTransferForm = ({ accounts }: PaymentTransferFormProps) => {
-  const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter(); // Hook for navigation
+  const [isLoading, setIsLoading] = useState(false); // State for loading spinner
 
   const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(formSchema), // Using Zod for validation
     defaultValues: {
       name: '',
       email: '',
@@ -49,28 +50,36 @@ const PaymentTransferForm = ({ accounts }: PaymentTransferFormProps) => {
     },
   });
 
+  // Submit handler for the form
   const submit = async (data: z.infer<typeof formSchema>) => {
-    setIsLoading(true);
+    setIsLoading(true); // Set loading state
 
     try {
+      // Decrypt receiver's account ID
       const receiverAccountId = decryptId(data.sharableId);
+
+      // Fetch bank details for the receiver using the decrypted account ID
       const receiverBank = (await getBankByAccountId({
         accountId: receiverAccountId,
       })) as Bank;
+
+      // Fetch sender's bank details using selected sender's bank ID
       const senderBank = await getBank({ documentId: data.senderBank });
 
+      // Check if both sender and receiver banks are available
       if (!senderBank || !receiverBank)
         throw new Error('Unable to fetch bank information');
+
       const transferParams = {
         sourceFundingSourceUrl: senderBank.fundingSourceUrl,
         destinationFundingSourceUrl: receiverBank.fundingSourceUrl,
         amount: data.amount,
       };
 
-      // create transfer
+      // Create the transfer using the provided parameters
       const transfer = await createTransfer(transferParams);
 
-      // create transfer transaction
+      // If transfer creation is successful, create the transaction record
       if (transfer) {
         const transaction = {
           name: data.name,
@@ -83,23 +92,26 @@ const PaymentTransferForm = ({ accounts }: PaymentTransferFormProps) => {
           email: data.email,
         };
 
+        // Create the transaction
         const newTransaction = await createTransaction(transaction);
 
+        // If transaction creation is successful, reset the form and navigate to the home page
         if (newTransaction) {
           form.reset();
           router.push('/');
         }
       }
     } catch (error) {
-      console.error('Submitting create transfer request failed: ', error);
+      console.error('Submitting create transfer request failed: ', error); // Log error if submission fails
     }
 
-    setIsLoading(false);
+    setIsLoading(false); // Reset loading state
   };
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(submit)} className="flex flex-col">
+        {/* Sender's Bank Selection */}
         <FormField
           control={form.control}
           name="senderBank"
@@ -118,8 +130,8 @@ const PaymentTransferForm = ({ accounts }: PaymentTransferFormProps) => {
                 <div className="flex w-full flex-col">
                   <FormControl>
                     <BankDropdown
-                      accounts={accounts}
-                      setValue={form.setValue}
+                      accounts={accounts} // Passing available bank accounts as a prop
+                      setValue={form.setValue} // Setting form values
                       otherStyles="!w-full"
                     />
                   </FormControl>
@@ -130,6 +142,7 @@ const PaymentTransferForm = ({ accounts }: PaymentTransferFormProps) => {
           )}
         />
 
+        {/* Transfer Note (Optional) */}
         <FormField
           control={form.control}
           name="name"
@@ -160,6 +173,7 @@ const PaymentTransferForm = ({ accounts }: PaymentTransferFormProps) => {
           )}
         />
 
+        {/* Bank Account Details Section */}
         <div className="payment-transfer_form-details">
           <h2 className="text-18 font-semibold text-gray-900">
             Bank account details
@@ -169,6 +183,7 @@ const PaymentTransferForm = ({ accounts }: PaymentTransferFormProps) => {
           </p>
         </div>
 
+        {/* Recipient's Email */}
         <FormField
           control={form.control}
           name="email"
@@ -193,6 +208,7 @@ const PaymentTransferForm = ({ accounts }: PaymentTransferFormProps) => {
           )}
         />
 
+        {/* Recipient's Plaid Sharable ID */}
         <FormField
           control={form.control}
           name="sharableId"
@@ -217,6 +233,7 @@ const PaymentTransferForm = ({ accounts }: PaymentTransferFormProps) => {
           )}
         />
 
+        {/* Amount */}
         <FormField
           control={form.control}
           name="amount"
@@ -241,6 +258,7 @@ const PaymentTransferForm = ({ accounts }: PaymentTransferFormProps) => {
           )}
         />
 
+        {/* Submit Button */}
         <div className="payment-transfer_btn-box">
           <Button type="submit" className="payment-transfer_btn">
             {isLoading ? (

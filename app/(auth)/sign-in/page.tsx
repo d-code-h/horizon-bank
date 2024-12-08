@@ -2,11 +2,11 @@ import AuthForm from '@/components/AuthForm';
 
 const SignIn = () => {
   return (
-    <>
-      <section className="flex-center size-full max-sm:px-6">
-        <AuthForm type="sign-in" />
-      </section>
-    </>
+    // Container section that centers the form on the screen
+    <section className="flex-center size-full max-sm:px-6">
+      {/* AuthForm component with sign-in type */}
+      <AuthForm type="sign-in" />
+    </section>
   );
 };
 
