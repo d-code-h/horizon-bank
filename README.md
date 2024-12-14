@@ -89,6 +89,6 @@ Here are some of the scripts available for development:
 We welcome contributions to Horizon Bank! 🎉
 Feel free to open issues or submit pull requests. Please make sure to follow the coding guidelines and the project's structure.
 
-### 📝 License
+#### ![MIT License](https://img.shields.io/badge/license-MIT-blue.svg) License
 
-This project is licensed under the MIT License.
+This project is licensed under the MIT License. See the [LICENSE](./LICENSE) file for details.
