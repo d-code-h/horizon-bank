@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Inter, IBM_Plex_Serif } from 'next/font/google';
 import './globals.css';
+import Toaster from '@/components/Toaster';
 
 // Loading fonts with Google Fonts
 const inter = Inter({
@@ -34,6 +35,7 @@ export default function RootLayout({
         className={`${inter.variable} ${ibmPlexSerif.variable} antialiased`}
       >
         {children}
+        <Toaster />
       </body>
     </html>
   );

@@ -50,8 +50,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             default:
               return null; // Handle unexpected statuses
           }
-        } catch (error) {
-          console.error('Authorization error:', error); // Log the error for debugging
+        } catch {
           return null; // Return null on error
         }
       },

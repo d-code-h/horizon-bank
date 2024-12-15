@@ -15,6 +15,7 @@ import { authFormSchema } from '@/lib/utils'; // Importing validation schema for
 import { getSession, signIn } from 'next-auth/react'; // Importing NextAuth methods for authentication.
 import PlaidLink from './PlaidLink'; // Importing PlaidLink component for linking accounts.
 import { signUpAction } from '@/lib/actions/user.actions'; // Importing sign-up action from user actions.
+import { toast, Bounce } from 'react-toastify';
 
 const AuthForm = ({ type }: { type: 'sign-in' | 'sign-up' }) => {
   const [user, setUser] = useState<
@@ -52,9 +53,19 @@ const AuthForm = ({ type }: { type: 'sign-in' | 'sign-up' }) => {
               } as User & { password?: string };
             });
           } else {
-            throw new Error('Error', res?.message as ErrorOptions); // Handle error during sign-up.
+            Error('Error', res?.message as ErrorOptions); // Handle error during sign-up.
           }
         } catch (error) {
+          toast.error(error as string, {
+            position: 'top-right',
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            transition: Bounce,
+          });
           console.log(error); // Log error if sign-up fails.
         }
       }
@@ -67,14 +78,32 @@ const AuthForm = ({ type }: { type: 'sign-in' | 'sign-up' }) => {
 
         if (response?.error) {
           // Show error message if sign-in fails.
-          console.log(response.error);
+          toast.error('User not found or invalid credentials', {
+            position: 'top-right',
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            transition: Bounce,
+          });
         } else {
           const session = await getSession(); // Fetch session after successful sign-in.
           if (session) router.push('/'); // Redirect to home page after successful sign-in.
         }
       }
     } catch {
-      console.log('Unexpected Error'); // Catch any unexpected errors.
+      toast.error('Something went wrong from our end. Try again later', {
+        position: 'top-right',
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        transition: Bounce,
+      });
     } finally {
       setIsLoading(false); // Set loading to false after operation completes.
     }
